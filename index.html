@@ -14,18 +14,18 @@
   --text-sec: #6B6A65;
   --text-tri: #9C9B96;
   --border: rgba(0,0,0,0.08);
-  --accent: #2D5A3D;
+  --accent: #414242;
   --accent-light: #E8F0EB;
   --amber: #BA7517;
   --amber-light: #FAEEDA;
   --amber-text: #633806;
-  --blue: #378ADD;
+  --blue: #687e94;
   --blue-light: #E6F1FB;
-  --blue-text: #0C447C;
+  --blue-text: #1f2934;
   --red: #E24B4A;
   --red-light: #FCEBEB;
   --red-text: #791F1F;
-  --purple: #7F77DD;
+  --purple: #2d2a47;
   --purple-light: #EEEDFE;
   --purple-text: #3C3489;
   --radius: 12px;
@@ -206,11 +206,11 @@ function processData(rows) {
       // Обмен: если есть дата проведения → проведённый, иначе → ожидающий
       if (o.date) {
         o.status = 'confirmed';
-        o.displayAmount = 'Обмен';
+        o.displayAmount = '0.00';
         o.isExchange = true;
       } else {
         o.status = 'pending';
-        o.displayAmount = 'Ожидается обмен';
+        o.displayAmount = '0.00';
         o.isExchange = true;
       }
       o.numericAmount = 0;
@@ -267,20 +267,20 @@ function renderSummary(orders) {
       amountCardHtml += `
         <div class="sum-divider"></div>
         <div class="sum-detail">
-          <span class="sum-detail-label">Из них по чарджбекам (${cb.length})</span>
           <span class="sum-detail-value">${fmtEur(cba)}</span>
+          <span class="sum-detail-label"> - по чарджбека (${cb.length})</span>
         </div>`;
     }
     amountCardHtml += `</div>`;
 
     let totalSub = 'проведённых';
     if (exchanges.length > 0) {
-      totalSub += `, из них ${exchanges.length} обм.`;
+      totalSub += `, из них ${exchanges.length} обмен`;
     }
 
     el.innerHTML = `
       <div class="summary-card s-total">
-        <div class="sum-label">Заказов</div>
+        <div class="sum-label">Запросов</div>
         <div class="sum-value">${total}</div>
         <div class="sum-sub">${totalSub}</div>
       </div>
@@ -289,7 +289,7 @@ function renderSummary(orders) {
   } else {
     el.innerHTML = `
       <div class="summary-card s-total">
-        <div class="sum-label">Заказов</div>
+        <div class="sum-label">Запросов</div>
         <div class="sum-value">${total}</div>
         <div class="sum-sub">ожидающих</div>
       </div>
