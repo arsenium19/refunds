@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Рефанды — Дашборд</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<style>
+:root {
+  --bg: #F8F7F4;
+  --surface: #FFFFFF;
+  --surface-alt: #F1EFE8;
+  --text: #1A1A18;
+  --text-sec: #6B6A65;
+  --text-tri: #9C9B96;
+  --border: rgba(0,0,0,0.08);
+  --accent: #2D5A3D;
+  --accent-light: #E8F0EB;
+  --amber: #BA7517;
+  --amber-light: #FAEEDA;
+  --amber-text: #633806;
+  --blue: #378ADD;
+  --blue-light: #E6F1FB;
+  --blue-text: #0C447C;
+  --red: #E24B4A;
+  --red-light: #FCEBEB;
+  --red-text: #791F1F;
+  --purple: #7F77DD;
+  --purple-light: #EEEDFE;
+  --purple-text: #3C3489;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+.loading { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 16px; }
+.spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading p { color: var(--text-sec); font-size: 14px; }
+
+.error { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 12px; padding: 2rem; text-align: center; }
+.error h2 { font-size: 18px; color: var(--red-text); }
+.error p { color: var(--text-sec); font-size: 14px; max-width: 420px; line-height: 1.6; }
+.error button { margin-top: 8px; padding: 10px 24px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; cursor: pointer; }
+.error code { font-size: 11px; color: var(--text-tri); margin-top: 8px; max-width: 500px; word-break: break-all; }
+
+.app { display: none; max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 3rem; }
+.header { margin-bottom: 1.75rem; }
+.header h1 { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 4px; }
+.header h1 span { color: var(--accent); }
+.header-sub { font-size: 12px; color: var(--text-tri); }
+
+.controls { display: flex; gap: 10px; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
+.control-group { display: flex; gap: 0; }
+.ctrl-btn { padding: 9px 18px; font-size: 13px; font-family: inherit; font-weight: 500; border: 1px solid var(--border); background: var(--surface); color: var(--text-sec); cursor: pointer; transition: all 0.15s; position: relative; }
+.ctrl-btn:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+.ctrl-btn:last-child { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+.ctrl-btn:not(:first-child) { margin-left: -1px; }
+.ctrl-btn:hover { background: var(--surface-alt); z-index: 1; }
+.ctrl-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); z-index: 2; }
+.ctrl-btn .count { display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 10px; font-size: 11px; font-weight: 600; background: rgba(255,255,255,0.25); }
+.ctrl-btn.active .count { background: rgba(255,255,255,0.3); }
+
+select.month-select { padding: 9px 32px 9px 14px; font-size: 13px; font-family: inherit; font-weight: 500; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B6A65' d='M2.5 4.5L6 8l3.5-3.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+
+.summary { display: flex; gap: 12px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.summary-card { flex: 1; min-width: 140px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.15rem; position: relative; overflow: hidden; }
+.summary-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+.summary-card.s-total::before { background: var(--accent); }
+.summary-card.s-amount::before { background: var(--blue); }
+.summary-card.s-chargeback::before { background: var(--red); }
+.sum-label { font-size: 11px; color: var(--text-tri); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 6px; }
+.sum-value { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+.sum-sub { font-size: 11px; color: var(--text-sec); margin-top: 3px; }
+
+.orders-list { display: flex; flex-direction: column; gap: 8px; }
+.order-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: box-shadow 0.15s; }
+.order-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.order-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; cursor: pointer; user-select: none; gap: 12px; }
+.order-header:hover { background: rgba(0,0,0,0.01); }
+.order-left { display: flex; align-items: center; gap: 14px; min-width: 0; flex-wrap: wrap; }
+.order-number { font-size: 15px; font-weight: 700; white-space: nowrap; }
+.order-type { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.type-return { background: var(--blue-light); color: var(--blue-text); }
+.type-cancel { background: var(--amber-light); color: var(--amber-text); }
+.type-chargeback { background: var(--red-light); color: var(--red-text); }
+.type-exchange { background: var(--purple-light); color: var(--purple-text); }
+.order-date { font-size: 12px; color: var(--text-tri); white-space: nowrap; }
+.order-right { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+.order-amount { font-size: 15px; font-weight: 600; white-space: nowrap; }
+.order-arrow { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; color: var(--text-tri); transition: transform 0.2s; }
+.order-card.open .order-arrow { transform: rotate(180deg); }
+.order-details { display: none; border-top: 1px solid var(--border); padding: 0 18px 16px; }
+.order-card.open .order-details { display: block; }
+.items-list { padding-top: 14px; }
+.item-row { display: flex; align-items: flex-start; padding: 10px 0; gap: 12px; border-bottom: 1px solid var(--border); }
+.item-row:last-child { border-bottom: none; }
+.item-info { min-width: 0; flex: 1; }
+.item-name { font-size: 13px; font-weight: 500; }
+.item-reason { font-size: 12px; color: var(--text-sec); margin-top: 3px; display: flex; align-items: center; gap: 5px; }
+.item-reason::before { content: ''; display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: var(--text-tri); flex-shrink: 0; }
+.items-count { font-size: 12px; color: var(--text-tri); padding-top: 14px; margin-bottom: -2px; }
+.empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-tri); font-size: 14px; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.order-card { animation: fadeIn 0.25s ease both; }
+.order-card:nth-child(2) { animation-delay: 0.03s; }
+.order-card:nth-child(3) { animation-delay: 0.06s; }
+.order-card:nth-child(4) { animation-delay: 0.09s; }
+.order-card:nth-child(5) { animation-delay: 0.12s; }
+
+@media (max-width: 600px) {
+  .app { padding: 1.25rem 1rem 2rem; }
+  .header h1 { font-size: 22px; }
+  .ctrl-btn { padding: 8px 14px; font-size: 12px; }
+  .order-header { padding: 12px 14px; flex-wrap: wrap; }
+  .order-details { padding: 0 14px 14px; }
+  .summary-card { min-width: 120px; }
+}
+</style>
+</head>
+<body>
+
+<div class="loading" id="loading"><div class="spinner"></div><p>Загрузка данных...</p></div>
+
+<div class="error" id="error">
+  <h2>Не удалось загрузить данные</h2>
+  <p>Проверьте подключение к интернету и что таблица опубликована.</p>
+  <button onclick="location.reload()">Попробовать снова</button>
+  <code id="errorDetail"></code>
+</div>
+
+<div class="app" id="app">
+  <div class="header">
+    <h1>Проведённые <span>рефанды</span></h1>
+    <div class="header-sub" id="updatedAt"></div>
+  </div>
+  <div class="controls">
+    <div class="control-group" id="statusBtns">
+      <button class="ctrl-btn active" data-status="confirmed">Успешные <span class="count" id="countConfirmed">0</span></button>
+      <button class="ctrl-btn" data-status="pending">Ожидающие <span class="count" id="countPending">0</span></button>
+    </div>
+    <select class="month-select" id="monthSelect"></select>
+  </div>
+  <div class="summary" id="summary"></div>
+  <div class="orders-list" id="ordersList"></div>
+</div>
+
+<script>
+const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRAgxu0aIgmfKzhhA54fvJyBOfQWBMe06vkjNj0eOONe4lQBPX3OeSfeid4n9nH4zbFarUXTw0q9ipR/pub?gid=0&single=true&output=csv';
+
+const TYPE_MAP = {
+  'Возврат': { cls: 'type-return', label: 'Возврат' },
+  'Отмена': { cls: 'type-cancel', label: 'Отмена' },
+  'Чарджбек': { cls: 'type-chargeback', label: 'Чарджбек' },
+  'Обмен': { cls: 'type-exchange', label: 'Обмен' },
+};
+const MONTHS_RU = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+
+let allOrders = [], activeStatus = 'confirmed', activeMonth = 'all';
+
+function parseEur(v) {
+  if (!v || !String(v).trim()) return null;
+  const n = parseFloat(String(v).replace(/[^\d.,\-]/g,'').replace(',','.'));
+  return (!isNaN(n) && n > 0) ? n : null;
+}
+function parseDate(v) {
+  if (!v || !String(v).trim()) return null;
+  const d = new Date(String(v).trim());
+  return isNaN(d) ? null : d;
+}
+function fmtEur(n) { return n.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})+' €'; }
+function fmtDate(d) { return d.toLocaleDateString('ru-RU',{day:'numeric',month:'short',year:'numeric'}); }
+function mKey(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+function mLabel(k) { const [y,m]=k.split('-'); return MONTHS_RU[parseInt(m)-1]+' '+y; }
+function esc(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+function iw(n) { if(n%10===1&&n%100!==11) return 'товар'; if([2,3,4].includes(n%10)&&![12,13,14].includes(n%100)) return 'товара'; return 'товаров'; }
+
+function processData(rows) {
+  const clean = rows.filter(r => r['Номер заказа'] && String(r['Номер заказа']).trim());
+  const grouped = {};
+  clean.forEach(r => {
+    const id = String(r['Номер заказа']).trim();
+    if (!grouped[id]) {
+      grouped[id] = { id, type:(r['Тип']||'').trim(), date:parseDate(r['Дата проведения']), orderDate:parseDate(r['Дата оформления']), eurAmount:parseEur(r['Сумма €']), deposit:parseEur(r['Депозит магазина €']), otherAmount:null, items:[] };
+      const vs = String(r['Сумма в валюте заказа']||'').trim();
+      if (vs) { const n=parseFloat(vs.replace(/[^\d.,\-]/g,'').replace(',','.')); if(!isNaN(n)&&n>0) grouped[id].otherAmount={value:n,currency:vs.replace(/[\d.,\s]/g,'').trim()}; }
+    } else {
+      if (!grouped[id].eurAmount) { const e=parseEur(r['Сумма €']); if(e) grouped[id].eurAmount=e; }
+      if (!grouped[id].deposit) { const d=parseEur(r['Депозит магазина €']); if(d) grouped[id].deposit=d; }
+    }
+    const nm=(r['Итем']||'').trim().replace(/^\n/,'');
+    if(nm) grouped[id].items.push({name:nm,reason:(r['Причина']||'').trim()});
+  });
+  return Object.values(grouped).map(o => {
+    if (o.eurAmount||o.deposit) {
+      o.status='confirmed';
+      o.displayAmount=o.eurAmount?fmtEur(o.eurAmount):fmtEur(o.deposit)+' (депозит)';
+      o.numericAmount=o.eurAmount||o.deposit||0;
+    } else {
+      o.status='pending';
+      o.displayAmount=o.otherAmount?o.otherAmount.value.toLocaleString('ru-RU',{minimumFractionDigits:2})+(o.otherAmount.currency?' '+o.otherAmount.currency:''):'—';
+      o.numericAmount=0;
+    }
+    return o;
+  });
+}
+
+function getMonths(orders) {
+  const s=new Set(); orders.forEach(o=>{const d=o.date||o.orderDate;if(d)s.add(mKey(d));}); return Array.from(s).sort().reverse();
+}
+function filterOrders() {
+  return allOrders.filter(o=>{
+    if(o.status!==activeStatus) return false;
+    if(activeMonth!=='all'){const d=o.date||o.orderDate; if(!d||mKey(d)!==activeMonth) return false;}
+    return true;
+  });
+}
+function renderSummary(orders) {
+  const el=document.getElementById('summary'), total=orders.length, amt=orders.reduce((s,o)=>s+o.numericAmount,0);
+  const cb=orders.filter(o=>o.type==='Чарджбек'), cba=cb.reduce((s,o)=>s+o.numericAmount,0);
+  let cards=[{label:'Заказов',value:total,sub:activeStatus==='confirmed'?'подтверждённых':'ожидающих',cls:'s-total'}];
+  if(activeStatus==='confirmed'){cards.push({label:'Общая сумма',value:fmtEur(amt),sub:'списано',cls:'s-amount'});if(cb.length)cards.push({label:'Чарджбеки',value:fmtEur(cba),sub:cb.length+' шт.',cls:'s-chargeback'});}
+  el.innerHTML=cards.map(c=>`<div class="summary-card ${c.cls}"><div class="sum-label">${c.label}</div><div class="sum-value">${c.value}</div><div class="sum-sub">${c.sub}</div></div>`).join('');
+}
+function renderOrders(orders) {
+  const el=document.getElementById('ordersList');
+  if(!orders.length){el.innerHTML='<div class="empty-state">Нет заказов по выбранным фильтрам</div>';return;}
+  orders.sort((a,b)=>(b.date||b.orderDate||new Date(0))-(a.date||a.orderDate||new Date(0)));
+  el.innerHTML=orders.map(o=>{
+    const ti=TYPE_MAP[o.type]||{cls:'',label:o.type}, ds=o.date?fmtDate(o.date):(o.orderDate?fmtDate(o.orderDate):'—');
+    const ih=o.items.length?o.items.map(it=>`<div class="item-row"><div class="item-info"><div class="item-name">${esc(it.name)}</div>${it.reason?`<div class="item-reason">${esc(it.reason)}</div>`:''}</div></div>`).join(''):'<div class="item-row"><div class="item-info"><div class="item-name" style="color:var(--text-tri)">Нет данных о товарах</div></div></div>';
+    return `<div class="order-card"><div class="order-header" onclick="this.parentElement.classList.toggle('open')"><div class="order-left"><span class="order-number">#${o.id}</span><span class="order-type ${ti.cls}">${ti.label}</span><span class="order-date">${ds}</span></div><div class="order-right"><span class="order-amount">${o.displayAmount}</span><span class="order-arrow"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div></div><div class="order-details"><div class="items-count">${o.items.length} ${iw(o.items.length)}</div><div class="items-list">${ih}</div></div></div>`;
+  }).join('');
+}
+function updateCounts() {
+  const cf=(st)=>allOrders.filter(o=>{if(o.status!==st)return false;if(activeMonth!=='all'){const d=o.date||o.orderDate;if(!d||mKey(d)!==activeMonth)return false;}return true;}).length;
+  document.getElementById('countConfirmed').textContent=cf('confirmed');
+  document.getElementById('countPending').textContent=cf('pending');
+}
+function render(){updateCounts();const o=filterOrders();renderSummary(o);renderOrders(o);}
+
+function showError(msg){document.getElementById('loading').style.display='none';document.getElementById('error').style.display='flex';if(msg)document.getElementById('errorDetail').textContent=msg;}
+
+function handleCSV(text){
+  const r=Papa.parse(text,{header:true,skipEmptyLines:true});
+  if(!r.data||!r.data.length){showError('CSV пустой');return;}
+  allOrders=processData(r.data);
+  const months=getMonths(allOrders), sel=document.getElementById('monthSelect');
+  sel.innerHTML='<option value="all">Все месяцы</option>'+months.map(m=>`<option value="${m}">${mLabel(m)}</option>`).join('');
+  sel.addEventListener('change',()=>{activeMonth=sel.value;render();});
+  document.getElementById('statusBtns').addEventListener('click',e=>{
+    const b=e.target.closest('.ctrl-btn');if(!b)return;
+    activeStatus=b.dataset.status;
+    document.querySelectorAll('#statusBtns .ctrl-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); render();
+  });
+  document.getElementById('updatedAt').textContent='Обновлено: '+new Date().toLocaleString('ru-RU');
+  document.getElementById('loading').style.display='none';
+  document.getElementById('app').style.display='block';
+  render();
+}
+
+async function init(){
+  // Method 1: direct fetch
+  try {
+    const r = await fetch(SHEET_CSV);
+    if(r.ok){ const t=await r.text(); if(t&&t.length>20&&!t.startsWith('<!')) { handleCSV(t); return; } }
+  } catch(e){}
+
+  // Method 2: JSONP-style via Google Sheets Visualization API
+  try {
+    const sheetId = '2PACX-1vRAgxu0aIgmfKzhhA54fvJyBOfQWBMe06vkjNj0eOONe4lQBPX3OeSfeid4n9nH4zbFarUXTw0q9ipR';
+    const vizUrl = `https://docs.google.com/spreadsheets/d/e/${sheetId}/gviz/tq?tqx=out:csv&gid=0`;
+    const r2 = await fetch(vizUrl);
+    if(r2.ok){ const t=await r2.text(); if(t&&t.length>20) { handleCSV(t); return; } }
+  } catch(e){}
+
+  // Method 3: corsproxy.io
+  try {
+    const r3 = await fetch('https://corsproxy.io/?'+encodeURIComponent(SHEET_CSV));
+    if(r3.ok){ const t=await r3.text(); if(t&&t.length>20&&!t.startsWith('<!')) { handleCSV(t); return; } }
+  } catch(e){}
+
+  showError('Все методы загрузки не сработали. Попробуйте обновить страницу или разместить файл на хостинге.');
+}
+
+init();
+</script>
+</body>
+</html>
