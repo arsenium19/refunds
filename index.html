@@ -787,6 +787,7 @@ function renderSummary(orders) {
   const returnCount = orders.filter(o => o.type === 'Возврат').length;
   const exchangeCount = orders.filter(o => o.type === 'Обмен').length;
   const chargebackCount = orders.filter(o => o.type === 'Чарджбек').length;
+  const cancelCount = orders.filter(o => o.type === 'Отмена').length;
 
   if (activeStatus === 'confirmed') {
     const totalReturns = orders.reduce((s,o) => s + o.numericAmount, 0);
@@ -827,7 +828,7 @@ function renderSummary(orders) {
         <div class="sum-value">${total}</div>
         <div class="sum-sub">
           проведённых<br>
-          возвратов: ${returnCount} · обменов: ${exchangeCount} · чарджбеков: ${chargebackCount}
+          возвратов: ${returnCount} · обменов: ${exchangeCount} · отмен: ${cancelCount} · чарджбеков: ${chargebackCount}
         </div>
       </div>
       ${amountCardHtml}
@@ -839,7 +840,7 @@ function renderSummary(orders) {
         <div class="sum-value">${total}</div>
         <div class="sum-sub">
           ожидающих<br>
-          возвратов: ${returnCount} · обменов: ${exchangeCount} · чарджбеков: ${chargebackCount}
+          возвратов: ${returnCount} · обменов: ${exchangeCount} · отмен: ${cancelCount} · чарджбеков: ${chargebackCount}
         </div>
       </div>
     `;
