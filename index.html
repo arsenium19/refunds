@@ -31,417 +31,964 @@
   --radius: 2px;
   --radius-sm: 1px;
 }
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
 
-.loading { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 16px; }
-.spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.loading p { color: var(--text-sec); font-size: 14px; }
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
 
-.app { display: none; max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 3rem; }
-.header { margin-bottom: 1.75rem; }
-.header h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 4px; }
-.header h1 span { color: var(--accent); }
-.header-sub { font-size: 12px; color: var(--text-tri); }
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 16px;
+}
 
-.controls { display: flex; gap: 10px; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
-.control-group { display: flex; gap: 0; }
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
 
-.ctrl-btn { padding: 9px 18px; font-size: 13px; border: 1px solid var(--border); background: var(--surface); color: var(--text-sec); cursor: pointer; }
-.ctrl-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+@keyframes spin { 
+  to { transform: rotate(360deg); } 
+}
 
-select.month-select { padding: 9px 32px 9px 14px; font-size: 13px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); }
+.loading p {
+  color: var(--text-sec);
+  font-size: 14px;
+}
 
-.summary { display: flex; gap: 12px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.error {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 12px;
+  padding: 2rem;
+  text-align: center;
+}
 
-.summary-card { flex: 1; min-width: 160px; background: var(--surface); border: 1px solid var(--border); padding: 1rem 1.15rem; }
+.error h2 {
+  font-size: 18px;
+  color: var(--red-text);
+}
 
-.sum-label { font-size: 11px; color: var(--text-tri); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 6px; }
-.sum-value { font-size: 22px; font-weight: 700; }
-.sum-sub { font-size: 11px; color: var(--text-sec); margin-top: 3px; }
+.error p {
+  color: var(--text-sec);
+  font-size: 14px;
+  max-width: 420px;
+  line-height: 1.6;
+}
 
-.sum-divider { height: 1px; background: var(--border); margin: 10px 0; }
+.error button {
+  margin-top: 8px;
+  padding: 10px 24px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
 
-.sum-detail { display: flex; justify-content: space-between; }
-.sum-detail-label { font-size: 12px; color: var(--text-sec); }
-.sum-detail-value { font-size: 14px; font-weight: 600; color: var(--red); }
+.error code {
+  font-size: 11px;
+  color: var(--text-tri);
+  margin-top: 8px;
+  max-width: 500px;
+  word-break: break-all;
+}
 
-.orders-list { display: flex; flex-direction: column; gap: 8px; }
+.app {
+  display: none;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+}
 
-.order-card { background: var(--surface); border: 1px solid var(--border); }
-.order-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; cursor: pointer; }
+.header {
+  margin-bottom: 1.75rem;
+}
 
-.order-left { display: flex; align-items: center; gap: 14px; }
+.header h1 {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  margin-bottom: 4px;
+}
 
-.order-number { font-size: 15px; font-weight: 700; }
+.header h1 span {
+  color: var(--accent);
+}
 
-.order-type { padding: 3px 10px; font-size: 11px; font-weight: 600; }
+.header-sub {
+  font-size: 12px;
+  color: var(--text-tri);
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.control-group {
+  display: flex;
+  gap: 0;
+}
+
+.ctrl-btn {
+  padding: 9px 18px;
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-sec);
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+}
+
+.ctrl-btn:first-child {
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+
+.ctrl-btn:last-child {
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.ctrl-btn:not(:first-child) {
+  margin-left: -1px;
+}
+
+.ctrl-btn:hover {
+  background: var(--surface-alt);
+  z-index: 1;
+}
+
+.ctrl-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  z-index: 2;
+}
+
+select.month-select {
+  padding: 9px 32px 9px 14px;
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B6A65' d='M2.5 4.5L6 8l3.5-3.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.summary {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.summary-card {
+  flex: 1;
+  min-width: 180px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.15rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.summary-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+
+.summary-card.s-total::before { background: var(--accent); }
+.summary-card.s-amount::before { background: var(--blue); }
+
+.sum-label {
+  font-size: 11px;
+  color: var(--text-tri);
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  margin-bottom: 6px;
+}
+
+.sum-value {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+
+.sum-sub {
+  font-size: 11px;
+  color: var(--text-sec);
+  margin-top: 4px;
+  line-height: 1.45;
+}
+
+.sum-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 10px 0;
+}
+
+.sum-detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.sum-detail-label {
+  font-size: 12px;
+  color: var(--text-sec);
+}
+
+.sum-detail-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--red);
+  flex-shrink: 0;
+}
+
+.sum-detail-value.deposit-value {
+  color: var(--blue-text);
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.order-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: box-shadow 0.15s;
+}
+
+.order-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.order-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 14px 18px;
+  cursor: pointer;
+  gap: 12px;
+}
+
+.order-left {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.order-topline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.order-number {
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.order-type {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 92px;
+  min-width: 92px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
 
 .type-return { background: var(--blue-light); color: var(--blue-text); }
 .type-cancel { background: var(--amber-light); color: var(--amber-text); }
 .type-chargeback { background: var(--red-light); color: var(--red-text); }
 .type-exchange { background: var(--purple-light); color: var(--purple-text); }
 
-.order-date { font-size: 12px; color: var(--text-tri); }
+.order-date {
+  font-size: 12px;
+  color: var(--text-tri);
+  line-height: 1.3;
+}
 
-.order-amount { font-size: 15px; font-weight: 600; }
+.order-right {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: max-content;
+}
 
-.order-details { display: none; border-top: 1px solid var(--border); padding: 14px 18px; }
-.order-card.open .order-details { display: block; }
+.order-amount {
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-align: right;
+}
 
-.item-row { padding: 10px 0; border-bottom: 1px solid var(--border); }
-.item-name { font-size: 13px; }
-.item-reason { font-size: 12px; color: var(--text-sec); }
+.order-pending-label {
+  font-size: 12px;
+  color: var(--text-tri);
+  font-style: italic;
+  white-space: nowrap;
+  text-align: right;
+}
 
-.empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-tri); }
+.order-exchange-label {
+  font-size: 12px;
+  color: var(--purple-text);
+  font-weight: 500;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.order-arrow {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tri);
+  transition: transform 0.2s;
+  margin-top: 1px;
+}
+
+.order-card.open .order-arrow {
+  transform: rotate(180deg);
+}
+
+.order-details {
+  display: none;
+  border-top: 1px solid var(--border);
+  padding: 0 18px 16px;
+}
+
+.order-card.open .order-details {
+  display: block;
+}
+
+.items-count {
+  font-size: 12px;
+  color: var(--text-tri);
+  padding-top: 14px;
+  margin-bottom: -2px;
+}
+
+.items-list {
+  padding-top: 8px;
+}
+
+.item-row {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.item-row:last-child {
+  border-bottom: none;
+}
+
+.item-name {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.item-reason {
+  font-size: 12px;
+  color: var(--text-sec);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-tri);
+  font-size: 14px;
+}
+
+@media (max-width: 600px) {
+  .app {
+    padding: 1rem 0.75rem 1.5rem;
+  }
+
+  .header {
+    margin-bottom: 1.1rem;
+  }
+
+  .header h1 {
+    font-size: 22px;
+  }
+
+  .header-sub {
+    font-size: 11px;
+  }
+
+  .controls {
+    gap: 8px;
+    margin-bottom: 1rem;
+  }
+
+  .ctrl-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  select.month-select {
+    padding: 8px 28px 8px 10px;
+    font-size: 12px;
+  }
+
+  .summary {
+    gap: 8px;
+    margin-bottom: 1rem;
+  }
+
+  .summary-card {
+    min-width: 100%;
+    padding: 0.5rem 0.575rem;
+  }
+
+  .sum-label {
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+
+  .sum-value {
+    font-size: 20px;
+  }
+
+  .sum-sub {
+    font-size: 10px;
+    margin-top: 2px;
+  }
+
+  .sum-divider {
+    margin: 8px 0;
+  }
+
+  .sum-detail-label {
+    font-size: 11px;
+  }
+
+  .sum-detail-value {
+    font-size: 12px;
+  }
+
+  .orders-list {
+    gap: 6px;
+  }
+
+  .order-header {
+    padding: 7px 9px;
+    gap: 8px;
+  }
+
+  .order-left {
+    gap: 4px;
+  }
+
+  .order-topline {
+    gap: 7px;
+  }
+
+  .order-number {
+    font-size: 13px;
+  }
+
+  .order-type {
+    width: 88px;
+    min-width: 88px;
+    height: 20px;
+    font-size: 10px;
+    padding: 0 6px;
+  }
+
+  .order-date {
+    font-size: 11px;
+  }
+
+  .order-amount {
+    font-size: 12px;
+  }
+
+  .order-pending-label,
+  .order-exchange-label {
+    font-size: 10px;
+  }
+
+  .order-arrow {
+    width: 16px;
+    height: 16px;
+  }
+
+  .order-details {
+    padding: 0 9px 8px;
+  }
+
+  .items-count {
+    padding-top: 8px;
+    font-size: 11px;
+  }
+
+  .items-list {
+    padding-top: 6px;
+  }
+
+  .item-row {
+    padding: 7px 0;
+  }
+
+  .item-name {
+    font-size: 12px;
+  }
+
+  .item-reason {
+    font-size: 11px;
+    margin-top: 3px;
+  }
+
+  .empty-state {
+    padding: 2.5rem 1rem;
+    font-size: 13px;
+  }
+}
 </style>
 </head>
-
 <body>
 
 <div class="loading" id="loading">
-<div class="spinner"></div>
-<p>Загрузка данных...</p>
+  <div class="spinner"></div>
+  <p>Загрузка данных...</p>
+</div>
+
+<div class="error" id="error">
+  <h2>Не удалось загрузить данные</h2>
+  <p>Проверьте подключение к интернету и что таблица опубликована.</p>
+  <button onclick="location.reload()">Попробовать снова</button>
+  <code id="errorDetail"></code>
 </div>
 
 <div class="app" id="app">
+  <div class="header">
+    <h1>Returns <span>& Refunds</span></h1>
+    <div class="header-sub" id="updatedAt"></div>
+  </div>
 
-<div class="header">
-<h1>Returns <span>& Refunds</span></h1>
-<div class="header-sub" id="updatedAt"></div>
-</div>
+  <div class="controls">
+    <div class="control-group" id="statusBtns">
+      <button class="ctrl-btn active" data-status="confirmed">Проведённые</button>
+      <button class="ctrl-btn" data-status="pending">Ожидающие</button>
+    </div>
+    <select class="month-select" id="monthSelect"></select>
+  </div>
 
-<div class="controls">
-
-<div class="control-group" id="statusBtns">
-<button class="ctrl-btn active" data-status="confirmed">Проведённые</button>
-<button class="ctrl-btn" data-status="pending">Ожидающие</button>
-</div>
-
-<select class="month-select" id="monthSelect"></select>
-
-</div>
-
-<div class="summary" id="summary"></div>
-
-<div class="orders-list" id="ordersList"></div>
-
+  <div class="summary" id="summary"></div>
+  <div class="orders-list" id="ordersList"></div>
 </div>
 
 <script>
+const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRAgxu0aIgmfKzhhA54fvJyBOfQWBMe06vkjNj0eOONe4lQBPX3OeSfeid4n9nH4zbFarUXTw0q9ipR/pub?gid=0&single=true&output=csv';
 
-const SHEET_CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vRAgxu0aIgmfKzhhA54fvJyBOfQWBMe06vkjNj0eOONe4lQBPX3OeSfeid4n9nH4zbFarUXTw0q9ipR/pub?gid=0&single=true&output=csv';
-
-const TYPE_MAP={
-'Возврат':{cls:'type-return',label:'Возврат'},
-'Отмена':{cls:'type-cancel',label:'Отмена'},
-'Чарджбек':{cls:'type-chargeback',label:'Чарджбек'},
-'Обмен':{cls:'type-exchange',label:'Обмен'}
+const TYPE_MAP = {
+  'Возврат': { cls: 'type-return', label: 'Возврат' },
+  'Отмена': { cls: 'type-cancel', label: 'Отмена' },
+  'Чарджбек': { cls: 'type-chargeback', label: 'Чарджбек' },
+  'Обмен': { cls: 'type-exchange', label: 'Обмен' },
 };
 
-const MONTHS_RU=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+const MONTHS_RU = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
 
-let allOrders=[];
-let activeStatus='confirmed';
-let activeMonth='all';
+let allOrders = [];
+let activeStatus = 'confirmed';
+let activeMonth = 'all';
 
-function parseEur(v){
-if(!v)return null;
-const n=parseFloat(String(v).replace(/[^\d.,\-]/g,'').replace(',','.'));
-return(!isNaN(n)&&n>0)?n:null;
+function parseEur(v) {
+  if (!v || !String(v).trim()) return null;
+  const n = parseFloat(String(v).replace(/[^\d.,\-]/g,'').replace(',','.'));
+  return (!isNaN(n) && n > 0) ? n : null;
 }
 
-function parseDate(v){
-if(!v)return null;
-const d=new Date(v);
-return isNaN(d)?null:d;
+function parseDate(v) {
+  if (!v || !String(v).trim()) return null;
+  const d = new Date(String(v).trim());
+  return isNaN(d) ? null : d;
 }
 
-function fmtEur(n){
-return n.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+function fmtEur(n) {
+  return n.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' €';
 }
 
-function mKey(d){
-return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+function fmtDate(d) {
+  return d.toLocaleDateString('ru-RU',{day:'numeric',month:'short',year:'numeric'});
 }
 
-function mLabel(k){
-const[y,m]=k.split('-');
-return MONTHS_RU[parseInt(m)-1]+' '+y;
+function mKey(d) {
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
 }
 
-function getMonths(orders){
-const s=new Set();
-orders.forEach(o=>{
-if(o.date)s.add(mKey(o.date));
-});
-return Array.from(s).sort().reverse();
+function mLabel(k) {
+  const [y,m] = k.split('-');
+  return MONTHS_RU[parseInt(m,10)-1] + ' ' + y;
 }
 
-function processData(rows){
-
-const grouped={};
-
-rows.forEach(r=>{
-
-const id=r['Номер заказа'];
-if(!id)return;
-
-if(!grouped[id]){
-grouped[id]={
-id,
-type:r['Тип'],
-date:parseDate(r['Дата проведения']),
-eurAmount:parseEur(r['Сумма €']),
-deposit:parseEur(r['Депозит магазина €']),
-items:[]
-};
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s ?? '';
+  return d.innerHTML;
 }
 
-if(r['Итем']){
-grouped[id].items.push({
-name:r['Итем'],
-reason:r['Причина']
-});
+function iw(n) {
+  if (n % 10 === 1 && n % 100 !== 11) return 'товар';
+  if ([2,3,4].includes(n % 10) && ![12,13,14].includes(n % 100)) return 'товара';
+  return 'товаров';
 }
 
-});
-
-return Object.values(grouped).map(o=>{
-
-o.numericAmount=0;
-o.depositAmount=0;
-
-if(o.type==='Обмен'){
-o.status=o.date?'confirmed':'pending';
-o.displayAmount='0.00';
-o.isExchange=true;
-return o;
+function getMonths(orders) {
+  const s = new Set();
+  orders.forEach(o => {
+    if (o.date) s.add(mKey(o.date));
+  });
+  return Array.from(s).sort().reverse();
 }
 
-if(o.eurAmount){
-o.numericAmount=o.eurAmount;
-o.displayAmount=fmtEur(o.eurAmount);
-o.status='confirmed';
+function processData(rows) {
+  const grouped = {};
+
+  rows.forEach(r => {
+    const id = String(r['Номер заказа'] || '').trim();
+    if (!id) return;
+
+    if (!grouped[id]) {
+      grouped[id] = {
+        id,
+        type: String(r['Тип'] || '').trim(),
+        date: parseDate(r['Дата проведения']),
+        eurAmount: parseEur(r['Сумма €']),
+        deposit: parseEur(r['Депозит магазина €']),
+        items: []
+      };
+    } else {
+      if (!grouped[id].eurAmount) {
+        const e = parseEur(r['Сумма €']);
+        if (e) grouped[id].eurAmount = e;
+      }
+      if (!grouped[id].deposit) {
+        const d = parseEur(r['Депозит магазина €']);
+        if (d) grouped[id].deposit = d;
+      }
+      if (!grouped[id].date) {
+        const dt = parseDate(r['Дата проведения']);
+        if (dt) grouped[id].date = dt;
+      }
+    }
+
+    const itemName = String(r['Итем'] || '').trim();
+    if (itemName) {
+      grouped[id].items.push({
+        name: itemName,
+        reason: String(r['Причина'] || '').trim()
+      });
+    }
+  });
+
+  return Object.values(grouped).map(o => {
+    o.numericAmount = 0;
+    o.depositAmount = 0;
+    o.isExchange = false;
+
+    if (o.type === 'Обмен') {
+      o.status = o.date ? 'confirmed' : 'pending';
+      o.displayAmount = '0.00';
+      o.isExchange = true;
+      return o;
+    }
+
+    if (o.eurAmount) {
+      o.numericAmount = o.eurAmount;
+      o.displayAmount = fmtEur(o.eurAmount);
+      o.status = 'confirmed';
+    } else if (o.deposit) {
+      o.depositAmount = o.deposit;
+      o.displayAmount = fmtEur(o.deposit) + ' (депозит)';
+      o.status = 'confirmed';
+    } else {
+      o.status = 'pending';
+      o.displayAmount = 'Ожидается списание';
+    }
+
+    return o;
+  });
 }
 
-else if(o.deposit){
-o.depositAmount=o.deposit;
-o.displayAmount=fmtEur(o.deposit)+' (депозит)';
-o.status='confirmed';
+function filterOrders() {
+  return allOrders.filter(o => {
+    if (o.status !== activeStatus) return false;
+
+    if (activeMonth !== 'all') {
+      if (!o.date) return false;
+      if (mKey(o.date) !== activeMonth) return false;
+    }
+
+    return true;
+  });
 }
 
-else{
-o.status='pending';
-o.displayAmount='Ожидается списание';
+function renderSummary(orders) {
+  const el = document.getElementById('summary');
+
+  const total = orders.length;
+  const returnCount = orders.filter(o => o.type === 'Возврат').length;
+  const exchangeCount = orders.filter(o => o.type === 'Обмен').length;
+  const chargebackCount = orders.filter(o => o.type === 'Чарджбек').length;
+
+  if (activeStatus === 'confirmed') {
+    const totalReturns = orders.reduce((s,o) => s + o.numericAmount, 0);
+    const totalDeposits = orders.reduce((s,o) => s + o.depositAmount, 0);
+    const chargebackAmount = orders
+      .filter(o => o.type === 'Чарджбек')
+      .reduce((s,o) => s + o.numericAmount, 0);
+
+    let amountCardHtml = `
+      <div class="summary-card s-amount">
+        <div class="sum-label">Общая сумма</div>
+        <div class="sum-value">${fmtEur(totalReturns)}</div>
+        <div class="sum-sub">возвращено клиентам</div>`;
+
+    if (chargebackAmount > 0) {
+      amountCardHtml += `
+        <div class="sum-divider"></div>
+        <div class="sum-detail">
+          <span class="sum-detail-value">${fmtEur(chargebackAmount)}</span>
+          <span class="sum-detail-label">чарджбеки</span>
+        </div>`;
+    }
+
+    if (totalDeposits > 0) {
+      amountCardHtml += `
+        <div class="sum-divider"></div>
+        <div class="sum-detail">
+          <span class="sum-detail-value deposit-value">${fmtEur(totalDeposits)}</span>
+          <span class="sum-detail-label">депозиты магазина</span>
+        </div>`;
+    }
+
+    amountCardHtml += `</div>`;
+
+    el.innerHTML = `
+      <div class="summary-card s-total">
+        <div class="sum-label">Запросов</div>
+        <div class="sum-value">${total}</div>
+        <div class="sum-sub">
+          проведённых<br>
+          возвратов: ${returnCount} · обменов: ${exchangeCount} · чарджбеков: ${chargebackCount}
+        </div>
+      </div>
+      ${amountCardHtml}
+    `;
+  } else {
+    el.innerHTML = `
+      <div class="summary-card s-total">
+        <div class="sum-label">Запросов</div>
+        <div class="sum-value">${total}</div>
+        <div class="sum-sub">
+          ожидающих<br>
+          возвратов: ${returnCount} · обменов: ${exchangeCount} · чарджбеков: ${chargebackCount}
+        </div>
+      </div>
+    `;
+  }
 }
 
-return o;
+function renderOrders(orders) {
+  const el = document.getElementById('ordersList');
 
-});
+  if (!orders.length) {
+    el.innerHTML = '<div class="empty-state">Нет заказов по выбранным фильтрам</div>';
+    return;
+  }
 
+  orders.sort((a,b) => {
+    const da = a.date || new Date(0);
+    const db = b.date || new Date(0);
+    return db - da;
+  });
+
+  el.innerHTML = orders.map(o => {
+    const ti = TYPE_MAP[o.type] || { cls: '', label: o.type };
+    const dateStr = o.date ? fmtDate(o.date) : 'нет даты';
+
+    const itemsHtml = o.items.length
+      ? o.items.map(i => `
+          <div class="item-row">
+            <div class="item-name">${esc(i.name)}</div>
+            ${i.reason ? `<div class="item-reason">${esc(i.reason)}</div>` : ''}
+          </div>
+        `).join('')
+      : `
+          <div class="item-row">
+            <div class="item-name" style="color:var(--text-tri)">Нет данных о товарах</div>
+          </div>
+        `;
+
+    let amountHtml = '';
+    if (o.isExchange) {
+      amountHtml = `<span class="order-exchange-label">${o.displayAmount}</span>`;
+    } else if (o.status === 'pending') {
+      amountHtml = `<span class="order-pending-label">${o.displayAmount}</span>`;
+    } else {
+      amountHtml = `<span class="order-amount">${o.displayAmount}</span>`;
+    }
+
+    return `
+      <div class="order-card">
+        <div class="order-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="order-left">
+            <div class="order-topline">
+              <span class="order-number">#${esc(o.id)}</span>
+              <span class="order-type ${ti.cls}">${esc(ti.label)}</span>
+            </div>
+            <div class="order-date">${esc(dateStr)}</div>
+          </div>
+
+          <div class="order-right">
+            ${amountHtml}
+            <span class="order-arrow">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+
+        <div class="order-details">
+          <div class="items-count">${o.items.length} ${iw(o.items.length)}</div>
+          <div class="items-list">${itemsHtml}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
-function filterOrders(){
-
-return allOrders.filter(o=>{
-
-if(o.status!==activeStatus)return false;
-
-if(activeMonth!=='all'){
-if(!o.date)return false;
-if(mKey(o.date)!==activeMonth)return false;
+function showError(msg) {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('error').style.display = 'flex';
+  if (msg) document.getElementById('errorDetail').textContent = msg;
 }
 
-return true;
-
-});
-
+function render() {
+  const orders = filterOrders();
+  renderSummary(orders);
+  renderOrders(orders);
 }
 
-function renderSummary(orders){
+function handleCSV(text) {
+  const parsed = Papa.parse(text, { header: true, skipEmptyLines: true });
 
-const el=document.getElementById('summary');
+  if (!parsed.data || !parsed.data.length) {
+    showError('CSV пустой');
+    return;
+  }
 
-if(activeStatus!=='confirmed'){
-el.innerHTML=`
-<div class="summary-card">
-<div class="sum-label">Запросов</div>
-<div class="sum-value">${orders.length}</div>
-<div class="sum-sub">ожидающих</div>
-</div>`;
-return;
+  allOrders = processData(parsed.data);
+
+  const months = getMonths(allOrders);
+  const sel = document.getElementById('monthSelect');
+
+  sel.innerHTML =
+    '<option value="all">Все месяцы</option>' +
+    months.map(m => `<option value="${m}">${mLabel(m)}</option>`).join('');
+
+  sel.addEventListener('change', () => {
+    activeMonth = sel.value;
+    render();
+  });
+
+  document.getElementById('statusBtns').addEventListener('click', e => {
+    const b = e.target.closest('.ctrl-btn');
+    if (!b) return;
+
+    activeStatus = b.dataset.status;
+    document.querySelectorAll('#statusBtns .ctrl-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    render();
+  });
+
+  document.getElementById('updatedAt').textContent = 'Обновлено: ' + new Date().toLocaleString('ru-RU');
+
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+
+  render();
 }
 
-const totalReturns=orders.reduce((s,o)=>s+o.numericAmount,0);
-const totalDeposits=orders.reduce((s,o)=>s+o.depositAmount,0);
+async function init() {
+  const proxies = ['', 'https://corsproxy.io/?', 'https://api.allorigins.win/raw?url='];
 
-const chargebacks=orders.filter(o=>o.type==='Чарджбек');
-const chargebackAmount=chargebacks.reduce((s,o)=>s+o.numericAmount,0);
+  for (const proxy of proxies) {
+    try {
+      const url = proxy ? proxy + encodeURIComponent(SHEET_CSV) : SHEET_CSV;
+      const resp = await fetch(url);
+      if (resp.ok) {
+        const text = await resp.text();
+        if (text && text.length > 20 && !text.startsWith('<!')) {
+          handleCSV(text);
+          return;
+        }
+      }
+    } catch (e) {}
+  }
 
-el.innerHTML=`
-
-<div class="summary-card">
-<div class="sum-label">Запросов</div>
-<div class="sum-value">${orders.length}</div>
-<div class="sum-sub">проведённых</div>
-</div>
-
-<div class="summary-card">
-
-<div class="sum-label">Общая сумма</div>
-<div class="sum-value">${fmtEur(totalReturns)}</div>
-<div class="sum-sub">возвращено клиентам</div>
-
-${chargebackAmount>0?`
-
-<div class="sum-divider"></div>
-
-<div class="sum-detail">
-<span class="sum-detail-value">${fmtEur(chargebackAmount)}</span>
-<span class="sum-detail-label">чарджбеки</span>
-</div>
-
-`:''}
-
-${totalDeposits>0?`
-
-<div class="sum-divider"></div>
-
-<div class="sum-detail">
-<span class="sum-detail-value">${fmtEur(totalDeposits)}</span>
-<span class="sum-detail-label">депозиты магазина</span>
-</div>
-
-`:''}
-
-</div>
-
-`;
-
-}
-
-function renderOrders(orders){
-
-const el=document.getElementById('ordersList');
-
-if(!orders.length){
-el.innerHTML='<div class="empty-state">Нет заказов по выбранным фильтрам</div>';
-return;
-}
-
-orders.sort((a,b)=>{
-const da=a.date||new Date(0);
-const db=b.date||new Date(0);
-return db-da;
-});
-
-el.innerHTML=orders.map(o=>{
-
-const ti=TYPE_MAP[o.type]||{cls:'',label:o.type};
-
-return`
-
-<div class="order-card">
-
-<div class="order-header" onclick="this.parentElement.classList.toggle('open')">
-
-<div class="order-left">
-
-<span class="order-number">#${o.id}</span>
-
-<span class="order-type ${ti.cls}">
-${ti.label}
-</span>
-
-<span class="order-date">
-${o.date?o.date.toLocaleDateString('ru-RU'):'нет даты'}
-</span>
-
-</div>
-
-<div class="order-right">
-
-<span class="order-amount">
-${o.displayAmount}
-</span>
-
-</div>
-
-</div>
-
-<div class="order-details">
-
-${o.items.map(i=>`
-<div class="item-row">
-<div class="item-name">${i.name}</div>
-<div class="item-reason">${i.reason||''}</div>
-</div>`).join('')}
-
-</div>
-
-</div>
-
-`;
-
-}).join('');
-
-}
-
-function render(){
-
-const orders=filterOrders();
-
-renderSummary(orders);
-renderOrders(orders);
-
-}
-
-async function init(){
-
-const resp=await fetch(SHEET_CSV);
-const text=await resp.text();
-
-const parsed=Papa.parse(text,{header:true,skipEmptyLines:true});
-
-allOrders=processData(parsed.data);
-
-const months=getMonths(allOrders);
-const sel=document.getElementById('monthSelect');
-
-sel.innerHTML='<option value="all">Все месяцы</option>'+
-months.map(m=>`<option value="${m}">${mLabel(m)}</option>`).join('');
-
-sel.addEventListener('change',()=>{
-activeMonth=sel.value;
-render();
-});
-
-document.getElementById('statusBtns').addEventListener('click',e=>{
-const b=e.target.closest('.ctrl-btn');
-if(!b)return;
-
-activeStatus=b.dataset.status;
-
-document.querySelectorAll('#statusBtns .ctrl-btn').forEach(x=>x.classList.remove('active'));
-b.classList.add('active');
-
-render();
-});
-
-document.getElementById('updatedAt').textContent='Обновлено: '+new Date().toLocaleString('ru-RU');
-
-document.getElementById('loading').style.display='none';
-document.getElementById('app').style.display='block';
-
-render();
-
+  showError('Не удалось загрузить данные.');
 }
 
 init();
-
 </script>
-
 </body>
 </html>
