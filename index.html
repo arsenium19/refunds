@@ -5,246 +5,96 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Returns & Refunds</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-
 <style>
 :root {
-  --bg:#F8F7F4;
-  --surface:#FFFFFF;
-  --surface-alt:#F1EFE8;
-  --text:#1A1A18;
-  --text-sec:#6B6A65;
-  --text-tri:#9C9B96;
-  --border:rgba(0,0,0,0.08);
-  --accent:#414242;
-  --blue:#687e94;
-  --blue-light:#E6F1FB;
-  --blue-text:#1f2934;
-  --red:#691f1f;
-  --red-light:#FCEBEB;
-  --red-text:#1e0707;
-  --amber:#BA7517;
-  --amber-light:#FAEEDA;
-  --amber-text:#2a1803;
-  --purple:#2d2a47;
-  --purple-light:#EEEDFE;
-  --purple-text:#14122c;
-  --radius:2px;
+  --bg: #F8F7F4;
+  --surface: #FFFFFF;
+  --surface-alt: #F1EFE8;
+  --text: #1A1A18;
+  --text-sec: #6B6A65;
+  --text-tri: #9C9B96;
+  --border: rgba(0,0,0,0.08);
+  --accent: #414242;
+  --accent-light: #E8F0EB;
+  --amber: #BA7517;
+  --amber-light: #FAEEDA;
+  --amber-text: #2a1803;
+  --blue: #687e94;
+  --blue-light: #E6F1FB;
+  --blue-text: #1f2934;
+  --red: #691f1f;
+  --red-light: #FCEBEB;
+  --red-text: #1e0707;
+  --purple: #2d2a47;
+  --purple-light: #EEEDFE;
+  --purple-text: #14122c;
+  --radius: 2px;
+  --radius-sm: 1px;
 }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
 
-*{margin:0;padding:0;box-sizing:border-box;}
+.loading { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 16px; }
+.spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading p { color: var(--text-sec); font-size: 14px; }
 
-body{
-font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
-background:var(--bg);
-color:var(--text);
-min-height:100vh;
--webkit-font-smoothing:antialiased;
-}
+.app { display: none; max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 3rem; }
+.header { margin-bottom: 1.75rem; }
+.header h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 4px; }
+.header h1 span { color: var(--accent); }
+.header-sub { font-size: 12px; color: var(--text-tri); }
 
-.loading{
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-min-height:100vh;
-gap:16px;
-}
+.controls { display: flex; gap: 10px; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
+.control-group { display: flex; gap: 0; }
 
-.spinner{
-width:32px;
-height:32px;
-border:3px solid var(--border);
-border-top-color:var(--accent);
-border-radius:50%;
-animation:spin .7s linear infinite;
-}
+.ctrl-btn { padding: 9px 18px; font-size: 13px; border: 1px solid var(--border); background: var(--surface); color: var(--text-sec); cursor: pointer; }
+.ctrl-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-@keyframes spin{to{transform:rotate(360deg)}}
+select.month-select { padding: 9px 32px 9px 14px; font-size: 13px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); }
 
-.app{
-display:none;
-max-width:860px;
-margin:0 auto;
-padding:2rem 1.5rem 3rem;
-}
+.summary { display: flex; gap: 12px; margin-bottom: 1.5rem; flex-wrap: wrap; }
 
-.header{margin-bottom:1.75rem}
+.summary-card { flex: 1; min-width: 160px; background: var(--surface); border: 1px solid var(--border); padding: 1rem 1.15rem; }
 
-.header h1{
-font-size:26px;
-font-weight:700;
-letter-spacing:-.3px;
-margin-bottom:4px;
-}
+.sum-label { font-size: 11px; color: var(--text-tri); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 6px; }
+.sum-value { font-size: 22px; font-weight: 700; }
+.sum-sub { font-size: 11px; color: var(--text-sec); margin-top: 3px; }
 
-.header h1 span{color:var(--accent)}
+.sum-divider { height: 1px; background: var(--border); margin: 10px 0; }
 
-.controls{
-display:flex;
-gap:10px;
-margin-bottom:1.5rem;
-flex-wrap:wrap;
-align-items:center;
-}
+.sum-detail { display: flex; justify-content: space-between; }
+.sum-detail-label { font-size: 12px; color: var(--text-sec); }
+.sum-detail-value { font-size: 14px; font-weight: 600; color: var(--red); }
 
-.ctrl-btn{
-padding:9px 18px;
-font-size:13px;
-border:1px solid var(--border);
-background:var(--surface);
-color:var(--text-sec);
-cursor:pointer;
-}
+.orders-list { display: flex; flex-direction: column; gap: 8px; }
 
-.ctrl-btn.active{
-background:var(--accent);
-color:#fff;
-border-color:var(--accent);
-}
+.order-card { background: var(--surface); border: 1px solid var(--border); }
+.order-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; cursor: pointer; }
 
-select.month-select{
-padding:9px 32px 9px 14px;
-font-size:13px;
-border:1px solid var(--border);
-background:var(--surface);
-cursor:pointer;
-}
+.order-left { display: flex; align-items: center; gap: 14px; }
 
-.summary{
-display:flex;
-gap:12px;
-margin-bottom:1.5rem;
-flex-wrap:wrap;
-}
+.order-number { font-size: 15px; font-weight: 700; }
 
-.summary-card{
-flex:1;
-min-width:160px;
-background:var(--surface);
-border:1px solid var(--border);
-padding:1rem 1.15rem;
-}
+.order-type { padding: 3px 10px; font-size: 11px; font-weight: 600; }
 
-.sum-label{
-font-size:11px;
-color:var(--text-tri);
-text-transform:uppercase;
-letter-spacing:.7px;
-margin-bottom:6px;
-}
+.type-return { background: var(--blue-light); color: var(--blue-text); }
+.type-cancel { background: var(--amber-light); color: var(--amber-text); }
+.type-chargeback { background: var(--red-light); color: var(--red-text); }
+.type-exchange { background: var(--purple-light); color: var(--purple-text); }
 
-.sum-value{
-font-size:22px;
-font-weight:700;
-letter-spacing:-.5px;
-}
+.order-date { font-size: 12px; color: var(--text-tri); }
 
-.sum-sub{
-font-size:11px;
-color:var(--text-sec);
-margin-top:3px;
-}
+.order-amount { font-size: 15px; font-weight: 600; }
 
-.sum-divider{
-height:1px;
-background:var(--border);
-margin:10px 0;
-}
+.order-details { display: none; border-top: 1px solid var(--border); padding: 14px 18px; }
+.order-card.open .order-details { display: block; }
 
-.sum-detail{
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
+.item-row { padding: 10px 0; border-bottom: 1px solid var(--border); }
+.item-name { font-size: 13px; }
+.item-reason { font-size: 12px; color: var(--text-sec); }
 
-.sum-detail-label{
-font-size:12px;
-color:var(--text-sec);
-}
-
-.sum-detail-value{
-font-size:14px;
-font-weight:600;
-color:var(--red);
-}
-
-.orders-list{
-display:flex;
-flex-direction:column;
-gap:8px;
-}
-
-.order-card{
-background:var(--surface);
-border:1px solid var(--border);
-}
-
-.order-header{
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:14px 18px;
-cursor:pointer;
-}
-
-.order-left{
-display:flex;
-align-items:center;
-gap:14px;
-}
-
-.order-number{
-font-size:15px;
-font-weight:700;
-}
-
-.order-type{
-padding:3px 10px;
-font-size:11px;
-font-weight:600;
-}
-
-.type-return{background:var(--blue-light);color:var(--blue-text)}
-.type-cancel{background:var(--amber-light);color:var(--amber-text)}
-.type-chargeback{background:var(--red-light);color:var(--red-text)}
-.type-exchange{background:var(--purple-light);color:var(--purple-text)}
-
-.order-date{
-font-size:12px;
-color:var(--text-tri);
-}
-
-.order-amount{
-font-size:15px;
-font-weight:600;
-}
-
-.order-details{
-display:none;
-border-top:1px solid var(--border);
-padding:14px 18px;
-}
-
-.order-card.open .order-details{display:block}
-
-.item-row{
-padding:8px 0;
-border-bottom:1px solid var(--border);
-}
-
-.item-name{font-size:13px}
-
-.item-reason{
-font-size:12px;
-color:var(--text-sec);
-}
-
-.empty-state{
-text-align:center;
-padding:4rem 2rem;
-color:var(--text-tri);
-font-size:14px;
-}
+.empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-tri); }
 </style>
 </head>
 
@@ -263,11 +113,14 @@ font-size:14px;
 </div>
 
 <div class="controls">
-<div id="statusBtns">
+
+<div class="control-group" id="statusBtns">
 <button class="ctrl-btn active" data-status="confirmed">Проведённые</button>
 <button class="ctrl-btn" data-status="pending">Ожидающие</button>
 </div>
+
 <select class="month-select" id="monthSelect"></select>
+
 </div>
 
 <div class="summary" id="summary"></div>
@@ -287,6 +140,8 @@ const TYPE_MAP={
 'Обмен':{cls:'type-exchange',label:'Обмен'}
 };
 
+const MONTHS_RU=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+
 let allOrders=[];
 let activeStatus='confirmed';
 let activeMonth='all';
@@ -297,14 +152,31 @@ const n=parseFloat(String(v).replace(/[^\d.,\-]/g,'').replace(',','.'));
 return(!isNaN(n)&&n>0)?n:null;
 }
 
-function fmtEur(n){
-return n.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
-}
-
 function parseDate(v){
 if(!v)return null;
 const d=new Date(v);
 return isNaN(d)?null:d;
+}
+
+function fmtEur(n){
+return n.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+}
+
+function mKey(d){
+return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+}
+
+function mLabel(k){
+const[y,m]=k.split('-');
+return MONTHS_RU[parseInt(m)-1]+' '+y;
+}
+
+function getMonths(orders){
+const s=new Set();
+orders.forEach(o=>{
+if(o.date)s.add(mKey(o.date));
+});
+return Array.from(s).sort().reverse();
 }
 
 function processData(rows){
@@ -317,7 +189,6 @@ const id=r['Номер заказа'];
 if(!id)return;
 
 if(!grouped[id]){
-
 grouped[id]={
 id,
 type:r['Тип'],
@@ -326,22 +197,21 @@ eurAmount:parseEur(r['Сумма €']),
 deposit:parseEur(r['Депозит магазина €']),
 items:[]
 };
-
 }
 
-const name=r['Итем'];
-const reason=r['Причина'];
-
-if(name){
-grouped[id].items.push({name,reason});
+if(r['Итем']){
+grouped[id].items.push({
+name:r['Итем'],
+reason:r['Причина']
+});
 }
 
 });
 
 return Object.values(grouped).map(o=>{
 
-o.depositAmount=0;
 o.numericAmount=0;
+o.depositAmount=0;
 
 if(o.type==='Обмен'){
 o.status=o.date?'confirmed':'pending';
@@ -368,6 +238,23 @@ o.displayAmount='Ожидается списание';
 }
 
 return o;
+
+});
+
+}
+
+function filterOrders(){
+
+return allOrders.filter(o=>{
+
+if(o.status!==activeStatus)return false;
+
+if(activeMonth!=='all'){
+if(!o.date)return false;
+if(mKey(o.date)!==activeMonth)return false;
+}
+
+return true;
 
 });
 
@@ -402,23 +289,32 @@ el.innerHTML=`
 </div>
 
 <div class="summary-card">
+
 <div class="sum-label">Общая сумма</div>
 <div class="sum-value">${fmtEur(totalReturns)}</div>
 <div class="sum-sub">возвращено клиентам</div>
 
 ${chargebackAmount>0?`
+
 <div class="sum-divider"></div>
+
 <div class="sum-detail">
 <span class="sum-detail-value">${fmtEur(chargebackAmount)}</span>
-<span class="sum-detail-label">Чарджбеки (включено в общую)</span>
-</div>`:''}
+<span class="sum-detail-label">чарджбеки</span>
+</div>
+
+`:''}
 
 ${totalDeposits>0?`
+
 <div class="sum-divider"></div>
+
 <div class="sum-detail">
 <span class="sum-detail-value">${fmtEur(totalDeposits)}</span>
-<span class="sum-detail-label">На депозит (не включено в общую)</span>
-</div>`:''}
+<span class="sum-detail-label">депозиты магазина</span>
+</div>
+
+`:''}
 
 </div>
 
@@ -431,13 +327,19 @@ function renderOrders(orders){
 const el=document.getElementById('ordersList');
 
 if(!orders.length){
-el.innerHTML='<div class="empty-state">Нет заказов</div>';
+el.innerHTML='<div class="empty-state">Нет заказов по выбранным фильтрам</div>';
 return;
 }
 
+orders.sort((a,b)=>{
+const da=a.date||new Date(0);
+const db=b.date||new Date(0);
+return db-da;
+});
+
 el.innerHTML=orders.map(o=>{
 
-const type=TYPE_MAP[o.type]||{cls:'',label:o.type};
+const ti=TYPE_MAP[o.type]||{cls:'',label:o.type};
 
 return`
 
@@ -449,8 +351,8 @@ return`
 
 <span class="order-number">#${o.id}</span>
 
-<span class="order-type ${type.cls}">
-${type.label}
+<span class="order-type ${ti.cls}">
+${ti.label}
 </span>
 
 <span class="order-date">
@@ -489,10 +391,10 @@ ${o.items.map(i=>`
 
 function render(){
 
-const filtered=allOrders.filter(o=>o.status===activeStatus);
+const orders=filterOrders();
 
-renderSummary(filtered);
-renderOrders(filtered);
+renderSummary(orders);
+renderOrders(orders);
 
 }
 
@@ -505,11 +407,33 @@ const parsed=Papa.parse(text,{header:true,skipEmptyLines:true});
 
 allOrders=processData(parsed.data);
 
+const months=getMonths(allOrders);
+const sel=document.getElementById('monthSelect');
+
+sel.innerHTML='<option value="all">Все месяцы</option>'+
+months.map(m=>`<option value="${m}">${mLabel(m)}</option>`).join('');
+
+sel.addEventListener('change',()=>{
+activeMonth=sel.value;
+render();
+});
+
+document.getElementById('statusBtns').addEventListener('click',e=>{
+const b=e.target.closest('.ctrl-btn');
+if(!b)return;
+
+activeStatus=b.dataset.status;
+
+document.querySelectorAll('#statusBtns .ctrl-btn').forEach(x=>x.classList.remove('active'));
+b.classList.add('active');
+
+render();
+});
+
+document.getElementById('updatedAt').textContent='Обновлено: '+new Date().toLocaleString('ru-RU');
+
 document.getElementById('loading').style.display='none';
 document.getElementById('app').style.display='block';
-
-document.getElementById('updatedAt').textContent=
-'Обновлено: '+new Date().toLocaleString('ru-RU');
 
 render();
 
