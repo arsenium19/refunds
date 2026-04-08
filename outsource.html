@@ -57,30 +57,39 @@ body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: 
 .controls { display: flex; gap: 10px; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
 select.month-select { padding: 9px 32px 9px 14px; font-size: 13px; font-family: inherit; font-weight: 500; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B6A65' d='M2.5 4.5L6 8l3.5-3.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
 
-.summary { display: flex; gap: 12px; margin-bottom: 1.5rem; flex-wrap: wrap; }
-.summary-card { flex: 1; min-width: 160px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.15rem; position: relative; overflow: hidden; }
+.summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1.5rem; }
+.summary-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.15rem; position: relative; overflow: hidden; }
 .summary-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
 .summary-card.s-models::before { background: var(--accent); }
 .summary-card.s-total::before { background: var(--amber); }
 .summary-card.s-qty::before { background: var(--blue); }
 .sum-label { font-size: 11px; color: var(--text-tri); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 6px; }
 .sum-value { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
-.sum-sub { font-size: 11px; color: var(--text-sec); margin-top: 4px; }
+.sum-sub { font-size: 11px; color: var(--text-sec); margin-top: 4px; line-height: 1.5; }
+.sum-divider { height: 1px; background: var(--border); margin: 8px 0; }
+.sum-detail { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.sum-detail-label { font-size: 11px; color: var(--text-sec); }
+.sum-detail-value { font-size: 13px; font-weight: 600; flex-shrink: 0; }
+.sum-detail-value.paid { color: var(--green); }
+.sum-detail-value.unpaid { color: var(--red); }
+.sum-detail-value.ready { color: var(--green); }
+.sum-detail-value.working { color: var(--amber); }
 
 .models-list { display: flex; flex-direction: column; gap: 10px; }
-
 .model-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: box-shadow 0.15s; }
 .model-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 
 .model-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; cursor: pointer; gap: 12px; }
 .model-header:hover { background: rgba(0,0,0,0.01); }
-
 .model-left { flex: 1; min-width: 0; }
 .model-name { font-size: 15px; font-weight: 700; }
-.model-meta { font-size: 12px; color: var(--text-tri); margin-top: 3px; }
-
+.model-meta { font-size: 12px; color: var(--text-tri); margin-top: 3px; line-height: 1.4; }
 .model-right { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
-.model-total { font-size: 15px; font-weight: 600; white-space: nowrap; }
+.model-amounts { text-align: right; }
+.model-total { font-size: 14px; font-weight: 600; white-space: nowrap; }
+.model-paid-info { font-size: 11px; color: var(--text-sec); margin-top: 2px; white-space: nowrap; }
+.model-paid-info .mp-paid { color: var(--green); }
+.model-paid-info .mp-unpaid { color: var(--red); }
 .model-arrow { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; color: var(--text-tri); transition: transform 0.2s; }
 .model-card.open .model-arrow { transform: rotate(180deg); }
 
@@ -89,30 +98,29 @@ select.month-select { padding: 9px 32px 9px 14px; font-size: 13px; font-family: 
 
 .variant-row { padding: 12px 18px; border-bottom: 1px solid var(--border); }
 .variant-row:last-child { border-bottom: none; }
-
 .variant-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .variant-name { font-size: 13px; font-weight: 600; }
 .variant-price { font-size: 13px; font-weight: 600; white-space: nowrap; }
-
-.variant-info { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 6px; font-size: 12px; color: var(--text-sec); }
+.variant-info { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 6px; font-size: 12px; color: var(--text-sec); }
 .variant-info span { display: inline-flex; align-items: center; gap: 4px; }
 
-.status-badge { display: inline-block; padding: 2px 8px; border-radius: 2px; font-size: 10px; font-weight: 600; }
-.status-done { background: var(--green-light); color: var(--green-text); }
-.status-working { background: var(--amber-light); color: var(--amber-text); }
-.status-paid { color: var(--green); }
-.status-unpaid { color: var(--red); }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 2px; font-size: 10px; font-weight: 600; }
+.badge-done { background: var(--green-light); color: var(--green-text); }
+.badge-working { background: var(--amber-light); color: var(--amber-text); }
+.badge-paid { background: var(--green-light); color: var(--green-text); }
+.badge-unpaid { background: var(--red-light); color: var(--red-text); }
 
 .empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-tri); font-size: 14px; }
 
 @media (max-width: 600px) {
   .app { padding: 1rem 0.75rem 1.5rem; }
   .header h1 { font-size: 22px; }
-  .summary-card { min-width: 100%; padding: 0.75rem; }
+  .summary { grid-template-columns: 1fr; }
+  .summary-card { padding: 0.75rem; }
   .sum-value { font-size: 20px; }
   .model-header { padding: 10px 12px; }
   .model-name { font-size: 13px; }
-  .model-total { font-size: 13px; }
+  .model-total { font-size: 12px; }
   .variant-row { padding: 10px 12px; }
   .variant-name { font-size: 12px; }
   .variant-price { font-size: 12px; }
@@ -191,6 +199,8 @@ function processData(rows) {
     dateReady: parseDate(r['Дата готовности']),
     total: parseFloat(String(r['Cума'] || r['Сума'] || '0').replace(/[^\d.,]/g, '').replace(',', '.')) || 0,
     datePaid: parseDate(r['Дата оплаты']),
+    get isReady() { return !!this.dateReady; },
+    get isPaid() { return !!this.datePaid; },
   }));
 }
 
@@ -209,12 +219,19 @@ function groupByModel(rows) {
   const groups = {};
   rows.forEach(r => {
     const key = r.model;
-    if (!groups[key]) groups[key] = { model: key, variants: [], totalSum: 0, totalQty: 0 };
+    if (!groups[key]) groups[key] = { model: key, variants: [] };
     groups[key].variants.push(r);
-    groups[key].totalSum += r.total;
-    groups[key].totalQty += r.qty;
   });
-  return Object.values(groups).sort((a, b) => {
+  return Object.values(groups).map(g => {
+    g.totalSum = g.variants.reduce((s, v) => s + v.total, 0);
+    g.paidSum = g.variants.filter(v => v.isPaid).reduce((s, v) => s + v.total, 0);
+    g.unpaidSum = g.totalSum - g.paidSum;
+    g.totalQty = g.variants.reduce((s, v) => s + v.qty, 0);
+    g.readyQty = g.variants.filter(v => v.isReady).reduce((s, v) => s + v.qty, 0);
+    g.workingQty = g.totalQty - g.readyQty;
+    g.allReady = g.variants.every(v => v.isReady);
+    return g;
+  }).sort((a, b) => {
     const da = a.variants[0].dateTransfer || new Date(0);
     const db = b.variants[0].dateTransfer || new Date(0);
     return db - da;
@@ -224,24 +241,58 @@ function groupByModel(rows) {
 function renderSummary(groups, rows) {
   const el = document.getElementById('summary');
   const totalModels = groups.length;
+  const readyModels = groups.filter(g => g.allReady).length;
+  const workingModels = totalModels - readyModels;
+
   const totalQty = rows.reduce((s, r) => s + r.qty, 0);
+  const readyQty = rows.filter(r => r.isReady).reduce((s, r) => s + r.qty, 0);
+  const workingQty = totalQty - readyQty;
+
   const totalSum = rows.reduce((s, r) => s + r.total, 0);
+  const paidSum = rows.filter(r => r.isPaid).reduce((s, r) => s + r.total, 0);
+  const unpaidSum = totalSum - paidSum;
 
   el.innerHTML = `
     <div class="summary-card s-models">
       <div class="sum-label">Моделей</div>
       <div class="sum-value">${totalModels}</div>
-      <div class="sum-sub">в производстве</div>
+      <div class="sum-divider"></div>
+      <div class="sum-detail">
+        <span class="sum-detail-label">Готовы</span>
+        <span class="sum-detail-value ready">${readyModels}</span>
+      </div>
+      <div class="sum-detail" style="margin-top:4px">
+        <span class="sum-detail-label">В производстве</span>
+        <span class="sum-detail-value working">${workingModels}</span>
+      </div>
     </div>
+
     <div class="summary-card s-qty">
       <div class="sum-label">Единиц</div>
       <div class="sum-value">${fmtNum(totalQty)}</div>
-      <div class="sum-sub">всего</div>
+      <div class="sum-divider"></div>
+      <div class="sum-detail">
+        <span class="sum-detail-label">Пошиты</span>
+        <span class="sum-detail-value ready">${fmtNum(readyQty)}</span>
+      </div>
+      <div class="sum-detail" style="margin-top:4px">
+        <span class="sum-detail-label">В работе</span>
+        <span class="sum-detail-value working">${fmtNum(workingQty)}</span>
+      </div>
     </div>
+
     <div class="summary-card s-total">
       <div class="sum-label">Общая сумма</div>
       <div class="sum-value">${fmtNum(totalSum)} ₴</div>
-      <div class="sum-sub">к оплате</div>
+      <div class="sum-divider"></div>
+      <div class="sum-detail">
+        <span class="sum-detail-label">Оплачено</span>
+        <span class="sum-detail-value paid">${fmtNum(paidSum)} ₴</span>
+      </div>
+      <div class="sum-detail" style="margin-top:4px">
+        <span class="sum-detail-label">К оплате</span>
+        <span class="sum-detail-value unpaid">${fmtNum(unpaidSum)} ₴</span>
+      </div>
     </div>
   `;
 }
@@ -255,13 +306,13 @@ function renderModels(groups) {
 
   el.innerHTML = groups.map(g => {
     const variantsHtml = g.variants.map(v => {
-      const readyHtml = v.dateReady
-        ? `<span class="status-badge status-done">Готово ${fmtDate(v.dateReady)}</span>`
-        : `<span class="status-badge status-working">В работе</span>`;
+      const readyBadge = v.isReady
+        ? `<span class="badge badge-done">Готово ${fmtDate(v.dateReady)}</span>`
+        : `<span class="badge badge-working">В работе</span>`;
 
-      const paidHtml = v.datePaid
-        ? `<span class="status-paid">Оплачено ${fmtDate(v.datePaid)}</span>`
-        : (v.total > 0 ? `<span class="status-unpaid">Не оплачено</span>` : '');
+      const paidBadge = v.isPaid
+        ? `<span class="badge badge-paid">Оплачено ${fmtDate(v.datePaid)}</span>`
+        : (v.total > 0 ? `<span class="badge badge-unpaid">Не оплачено</span>` : '');
 
       const priceHtml = v.price > 0 ? `${fmtNum(v.price)} ₴/шт` : '';
       const totalHtml = v.total > 0 ? `${fmtNum(v.total)} ₴` : '—';
@@ -274,26 +325,40 @@ function renderModels(groups) {
           </div>
           <div class="variant-info">
             ${priceHtml ? `<span>${priceHtml}</span>` : ''}
-            <span>${readyHtml}</span>
-            ${paidHtml ? `<span>${paidHtml}</span>` : ''}
+            <span>${readyBadge}</span>
+            ${paidBadge ? `<span>${paidBadge}</span>` : ''}
             <span>Подрядчик: ${esc(v.contractor)}</span>
           </div>
         </div>
       `;
     }).join('');
 
-    const dateStr = g.variants[0].dateTransfer ? fmtDate(g.variants[0].dateTransfer) : '';
     const contractors = [...new Set(g.variants.map(v => v.contractor).filter(Boolean))].join(', ');
+    const statusText = g.allReady ? 'всё готово' : `${g.readyQty} из ${g.totalQty} шт. готово`;
+
+    let paidInfoHtml = '';
+    if (g.totalSum > 0) {
+      if (g.unpaidSum > 0 && g.paidSum > 0) {
+        paidInfoHtml = `<span class="mp-paid">${fmtNum(g.paidSum)} ₴ опл.</span> · <span class="mp-unpaid">${fmtNum(g.unpaidSum)} ₴ к опл.</span>`;
+      } else if (g.unpaidSum <= 0) {
+        paidInfoHtml = `<span class="mp-paid">Оплачено</span>`;
+      } else {
+        paidInfoHtml = `<span class="mp-unpaid">К оплате</span>`;
+      }
+    }
 
     return `
       <div class="model-card">
         <div class="model-header" onclick="this.parentElement.classList.toggle('open')">
           <div class="model-left">
             <div class="model-name">${esc(g.model)}</div>
-            <div class="model-meta">${g.variants.length} вар. · ${g.totalQty} шт.${contractors ? ' · ' + esc(contractors) : ''}${dateStr ? ' · ' + dateStr : ''}</div>
+            <div class="model-meta">${g.variants.length} вар. · ${g.totalQty} шт. · ${statusText}${contractors ? ' · ' + esc(contractors) : ''}</div>
           </div>
           <div class="model-right">
-            <span class="model-total">${g.totalSum > 0 ? fmtNum(g.totalSum) + ' ₴' : '—'}</span>
+            <div class="model-amounts">
+              <div class="model-total">${g.totalSum > 0 ? fmtNum(g.totalSum) + ' ₴' : '—'}</div>
+              ${paidInfoHtml ? `<div class="model-paid-info">${paidInfoHtml}</div>` : ''}
+            </div>
             <span class="model-arrow"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
           </div>
         </div>
