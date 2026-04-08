@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Outsource</title>
+<title>ANNAFOXY — Аутсорс</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
 :root {
@@ -67,11 +67,13 @@ select.month-select { padding: 9px 32px 9px 14px; font-size: 13px; font-family: 
 .sum-value { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
 .sum-sub { font-size: 11px; color: var(--text-sec); margin-top: 4px; line-height: 1.5; }
 .sum-divider { height: 1px; background: var(--border); margin: 8px 0; }
-.sum-detail { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.sum-detail { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 4px; }
+.sum-detail:first-of-type { margin-top: 0; }
 .sum-detail-label { font-size: 11px; color: var(--text-sec); }
 .sum-detail-value { font-size: 13px; font-weight: 600; flex-shrink: 0; }
 .sum-detail-value.paid { color: var(--green); }
 .sum-detail-value.unpaid { color: var(--red); }
+.sum-detail-value.pending { color: var(--amber); }
 .sum-detail-value.ready { color: var(--green); }
 .sum-detail-value.working { color: var(--amber); }
 
@@ -90,6 +92,7 @@ select.month-select { padding: 9px 32px 9px 14px; font-size: 13px; font-family: 
 .model-paid-info { font-size: 11px; color: var(--text-sec); margin-top: 2px; white-space: nowrap; }
 .model-paid-info .mp-paid { color: var(--green); }
 .model-paid-info .mp-unpaid { color: var(--red); }
+.model-paid-info .mp-pending { color: var(--amber); }
 .model-arrow { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; color: var(--text-tri); transition: transform 0.2s; }
 .model-card.open .model-arrow { transform: rotate(180deg); }
 
@@ -146,7 +149,8 @@ select.month-select { padding: 9px 32px 9px 14px; font-size: 13px; font-family: 
   </a>
 
   <div class="header">
-    <h1>Outsource</h1>
+    <div class="header-brand">ANNAFOXY</div>
+    <h1>Аутсорс</h1>
     <div class="header-sub" id="updatedAt"></div>
   </div>
 
@@ -224,7 +228,10 @@ function groupByModel(rows) {
   return Object.values(groups).map(g => {
     g.totalSum = g.variants.reduce((s, v) => s + v.total, 0);
     g.paidSum = g.variants.filter(v => v.isPaid).reduce((s, v) => s + v.total, 0);
-    g.unpaidSum = g.totalSum - g.paidSum;
+    // К оплате = готовые но не оплаченные
+    g.toPaySum = g.variants.filter(v => v.isReady && !v.isPaid).reduce((s, v) => s + v.total, 0);
+    // Ожидание = не готовые и не оплаченные
+    g.pendingSum = g.variants.filter(v => !v.isReady && !v.isPaid).reduce((s, v) => s + v.total, 0);
     g.totalQty = g.variants.reduce((s, v) => s + v.qty, 0);
     g.readyQty = g.variants.filter(v => v.isReady).reduce((s, v) => s + v.qty, 0);
     g.workingQty = g.totalQty - g.readyQty;
@@ -249,7 +256,8 @@ function renderSummary(groups, rows) {
 
   const totalSum = rows.reduce((s, r) => s + r.total, 0);
   const paidSum = rows.filter(r => r.isPaid).reduce((s, r) => s + r.total, 0);
-  const unpaidSum = totalSum - paidSum;
+  const toPaySum = rows.filter(r => r.isReady && !r.isPaid).reduce((s, r) => s + r.total, 0);
+  const pendingSum = rows.filter(r => !r.isReady && !r.isPaid).reduce((s, r) => s + r.total, 0);
 
   el.innerHTML = `
     <div class="summary-card s-models">
@@ -260,7 +268,7 @@ function renderSummary(groups, rows) {
         <span class="sum-detail-label">Готовы</span>
         <span class="sum-detail-value ready">${readyModels}</span>
       </div>
-      <div class="sum-detail" style="margin-top:4px">
+      <div class="sum-detail">
         <span class="sum-detail-label">В производстве</span>
         <span class="sum-detail-value working">${workingModels}</span>
       </div>
@@ -274,7 +282,7 @@ function renderSummary(groups, rows) {
         <span class="sum-detail-label">Пошиты</span>
         <span class="sum-detail-value ready">${fmtNum(readyQty)}</span>
       </div>
-      <div class="sum-detail" style="margin-top:4px">
+      <div class="sum-detail">
         <span class="sum-detail-label">В работе</span>
         <span class="sum-detail-value working">${fmtNum(workingQty)}</span>
       </div>
@@ -288,10 +296,14 @@ function renderSummary(groups, rows) {
         <span class="sum-detail-label">Оплачено</span>
         <span class="sum-detail-value paid">${fmtNum(paidSum)} ₴</span>
       </div>
-      <div class="sum-detail" style="margin-top:4px">
+      <div class="sum-detail">
         <span class="sum-detail-label">К оплате</span>
-        <span class="sum-detail-value unpaid">${fmtNum(unpaidSum)} ₴</span>
+        <span class="sum-detail-value unpaid">${fmtNum(toPaySum)} ₴</span>
       </div>
+      ${pendingSum > 0 ? `<div class="sum-detail">
+        <span class="sum-detail-label">Ожидание</span>
+        <span class="sum-detail-value pending">${fmtNum(pendingSum)} ₴</span>
+      </div>` : ''}
     </div>
   `;
 }
@@ -311,7 +323,9 @@ function renderModels(groups) {
 
       const paidBadge = v.isPaid
         ? `<span class="badge badge-paid">Оплачено ${fmtDate(v.datePaid)}</span>`
-        : (v.total > 0 ? `<span class="badge badge-unpaid">Не оплачено</span>` : '');
+        : (v.total > 0 && v.isReady
+            ? `<span class="badge badge-unpaid">К оплате</span>`
+            : (v.total > 0 ? `<span class="badge badge-working">Ожидание</span>` : ''));
 
       const priceHtml = v.price > 0 ? `${fmtNum(v.price)} ₴/шт` : '';
       const totalHtml = v.total > 0 ? `${fmtNum(v.total)} ₴` : '—';
@@ -335,16 +349,11 @@ function renderModels(groups) {
     const contractors = [...new Set(g.variants.map(v => v.contractor).filter(Boolean))].join(', ');
     const statusText = g.allReady ? 'всё готово' : `${g.readyQty} из ${g.totalQty} шт. готово`;
 
-    let paidInfoHtml = '';
-    if (g.totalSum > 0) {
-      if (g.unpaidSum > 0 && g.paidSum > 0) {
-        paidInfoHtml = `<span class="mp-paid">${fmtNum(g.paidSum)} ₴ опл.</span> · <span class="mp-unpaid">${fmtNum(g.unpaidSum)} ₴ к опл.</span>`;
-      } else if (g.unpaidSum <= 0) {
-        paidInfoHtml = `<span class="mp-paid">Оплачено</span>`;
-      } else {
-        paidInfoHtml = `<span class="mp-unpaid">К оплате</span>`;
-      }
-    }
+    let paidParts = [];
+    if (g.paidSum > 0) paidParts.push(`<span class="mp-paid">${fmtNum(g.paidSum)} ₴ опл.</span>`);
+    if (g.toPaySum > 0) paidParts.push(`<span class="mp-unpaid">${fmtNum(g.toPaySum)} ₴ к опл.</span>`);
+    if (g.pendingSum > 0) paidParts.push(`<span class="mp-pending">${fmtNum(g.pendingSum)} ₴ ожид.</span>`);
+    const paidInfoHtml = paidParts.join(' · ');
 
     return `
       <div class="model-card">
