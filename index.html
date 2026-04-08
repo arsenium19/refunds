@@ -897,13 +897,7 @@ function renderOrders(orders) {
     return `
       <div class="order-card">
         <div class="order-header" onclick="this.parentElement.classList.toggle('open')">
-          <div class="order-left">
-            <div class="order-topline">
-              <span class="order-number">#${esc(o.id)}</span>
-              <span class="order-type ${ti.cls}">${esc(ti.label)}</span>
-            </div>
-            <div class="order-date">${esc(dateStr)}</div>
-          </div>
+         <div class="order-left">
 
           <div class="order-right">
             ${amountHtml}
