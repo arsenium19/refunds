@@ -60,8 +60,8 @@ body {
   animation: spin 0.7s linear infinite;
 }
 
-@keyframes spin { 
-  to { transform: rotate(360deg); } 
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .loading p {
@@ -314,8 +314,7 @@ select.month-select {
   min-width: 0;
   flex: 1;
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-items: flex-start;
 }
 
 .order-topline-wrap {
@@ -323,6 +322,7 @@ select.month-select {
   flex-direction: column;
   align-items: center;
   width: fit-content;
+  max-width: 100%;
 }
 
 .order-topline {
@@ -330,6 +330,7 @@ select.month-select {
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .order-number {
@@ -539,14 +540,6 @@ select.month-select {
     gap: 8px;
   }
 
-  .order-left {
-    gap: 4px;
-  }
-
-  .order-topline {
-    gap: 7px;
-  }
-
   .order-number {
     font-size: 13px;
   }
@@ -679,7 +672,7 @@ function fmtDate(d) {
 }
 
 function mKey(d) {
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2,'0');
 }
 
 function mLabel(k) {
@@ -795,8 +788,8 @@ function renderSummary(orders) {
   const total = orders.length;
   const returnCount = orders.filter(o => o.type === 'Возврат').length;
   const exchangeCount = orders.filter(o => o.type === 'Обмен').length;
-  const chargebackCount = orders.filter(o => o.type === 'Чарджбек').length;
   const cancelCount = orders.filter(o => o.type === 'Отмена').length;
+  const chargebackCount = orders.filter(o => o.type === 'Чарджбек').length;
 
   if (activeStatus === 'confirmed') {
     const totalReturns = orders.reduce((s,o) => s + o.numericAmount, 0);
@@ -833,10 +826,10 @@ function renderSummary(orders) {
 
     el.innerHTML = `
       <div class="summary-card s-total">
-        <div class="sum-label">Всего Запросов</div>
+        <div class="sum-label">Всего запросов</div>
         <div class="sum-value">${total}</div>
         <div class="sum-sub">
-          (возвратов: ${returnCount} · обменов: ${exchangeCount} · отмен: ${cancelCount} · чарджбеков: ${chargebackCount})
+          возвратов: ${returnCount} · обменов: ${exchangeCount} · отмен: ${cancelCount} · чарджбеков: ${chargebackCount}
         </div>
       </div>
       ${amountCardHtml}
@@ -844,10 +837,10 @@ function renderSummary(orders) {
   } else {
     el.innerHTML = `
       <div class="summary-card s-total">
-        <div class="sum-label">Всего Запросов</div>
+        <div class="sum-label">Всего запросов</div>
         <div class="sum-value">${total}</div>
         <div class="sum-sub">
-          (возвратов: ${returnCount} · обменов: ${exchangeCount} · отмен: ${cancelCount} · чарджбеков: ${chargebackCount})
+          возвратов: ${returnCount} · обменов: ${exchangeCount} · отмен: ${cancelCount} · чарджбеков: ${chargebackCount}
         </div>
       </div>
     `;
@@ -897,7 +890,15 @@ function renderOrders(orders) {
     return `
       <div class="order-card">
         <div class="order-header" onclick="this.parentElement.classList.toggle('open')">
-         <div class="order-left">
+          <div class="order-left">
+            <div class="order-topline-wrap">
+              <div class="order-topline">
+                <span class="order-number">#${esc(o.id)}</span>
+                <span class="order-type ${ti.cls}">${esc(ti.label)}</span>
+              </div>
+              <div class="order-date">${esc(dateStr)}</div>
+            </div>
+          </div>
 
           <div class="order-right">
             ${amountHtml}
