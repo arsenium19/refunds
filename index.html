@@ -943,7 +943,7 @@ function handleCSV(text) {
   const sel = document.getElementById('monthSelect');
 
   sel.innerHTML =
-    '<option value="all">Все месяцы</option>' +
+    '<option value="all">Весь период</option>' +
     months.map(m => `<option value="${m}">${mLabel(m)}</option>`).join('');
 
   sel.addEventListener('change', () => {
