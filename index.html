@@ -745,7 +745,7 @@ function processData(rows) {
 
     if (o.type === 'Обмен') {
       o.status = o.date ? 'confirmed' : 'pending';
-      o.displayAmount = '0.00';
+      o.displayAmount = '-';
       o.isExchange = true;
       return o;
     }
