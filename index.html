@@ -28,6 +28,8 @@
   --purple: #2d2a47;
   --purple-light: #EEEDFE;
   --purple-text: #14122c;
+  --green: #355b3d;
+  --green-light: #E8F3EA;
   --radius: 2px;
   --radius-sm: 1px;
 }
@@ -399,6 +401,14 @@ select.month-select {
   text-align: right;
 }
 
+.order-won-label {
+  font-size: 12px;
+  color: var(--green);
+  font-weight: 500;
+  white-space: nowrap;
+  text-align: right;
+}
+
 .order-arrow {
   width: 18px;
   height: 18px;
@@ -556,7 +566,8 @@ select.month-select {
     font-size: 11px;
   }
 
-  .order-amount {
+  .order-amount,
+  .order-won-label {
     font-size: 12px;
   }
 
@@ -667,9 +678,7 @@ function parseDate(v) {
     const day = parseInt(parts[1], 10);
     const month = parseInt(parts[2], 10) - 1;
     let year = parseInt(parts[3], 10);
-
     if (year < 100) year += 2000;
-
     const d = new Date(year, month, day);
     return isNaN(d) ? null : d;
   }
@@ -716,6 +725,10 @@ function iw(n) {
   return 'товаров';
 }
 
+function normalizeStatus(v) {
+  return String(v || '').trim().toLowerCase();
+}
+
 function getMonths(orders) {
   const s = new Set();
   orders.forEach(o => {
@@ -735,6 +748,7 @@ function processData(rows) {
       grouped[id] = {
         id,
         type: String(r['Тип'] || '').trim(),
+        statusLabel: String(r['Статус'] || '').trim(),
         date: getOrderDate(r),
         eurAmount: parseEur(r['Сумма €']),
         deposit: parseEur(r['Депозит магазина €']),
@@ -755,6 +769,10 @@ function processData(rows) {
         const dt = getOrderDate(r);
         if (dt) grouped[id].date = dt;
       }
+
+      if (!grouped[id].statusLabel) {
+        grouped[id].statusLabel = String(r['Статус'] || '').trim();
+      }
     }
 
     const itemName = String(r['Итем'] || '').trim();
@@ -770,6 +788,10 @@ function processData(rows) {
     o.numericAmount = 0;
     o.depositAmount = 0;
     o.isExchange = false;
+    o.isWonChargeback = (
+      o.type === 'Чарджбек' &&
+      normalizeStatus(o.statusLabel) === 'победа'
+    );
 
     if (o.type === 'Обмен') {
       o.status = o.date ? 'confirmed' : 'pending';
@@ -779,12 +801,12 @@ function processData(rows) {
     }
 
     if (o.eurAmount) {
-      o.numericAmount = o.eurAmount;
+      o.numericAmount = o.isWonChargeback ? 0 : o.eurAmount;
       o.displayAmount = fmtEur(o.eurAmount);
       o.status = 'confirmed';
     } else if (o.deposit) {
       o.depositAmount = o.deposit;
-      o.displayAmount = fmtEur(o.deposit) + ' (депозит)';
+      o.displayAmount = fmtEur(o.deposit) + ' (на депозит)';
       o.status = 'confirmed';
     } else {
       o.status = 'pending';
@@ -844,7 +866,7 @@ function renderSummary(orders) {
         <div class="sum-divider"></div>
         <div class="sum-detail">
           <span class="sum-detail-value deposit-value">${fmtEur(totalDeposits)}</span>
-          <span class="sum-detail-label">депозиты магазина</span>
+          <span class="sum-detail-label">депозит магазина</span>
         </div>`;
     }
 
@@ -907,6 +929,8 @@ function renderOrders(orders) {
     let amountHtml = '';
     if (o.isExchange) {
       amountHtml = `<span class="order-exchange-label">${o.displayAmount}</span>`;
+    } else if (o.isWonChargeback) {
+      amountHtml = `<span class="order-won-label">${o.displayAmount} (выигран)</span>`;
     } else if (o.status === 'pending') {
       amountHtml = `<span class="order-pending-label">${o.displayAmount}</span>`;
     } else {
