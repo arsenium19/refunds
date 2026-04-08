@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+<style>
+:root {
+  --bg: #F8F7F4;
+  --surface: #FFFFFF;
+  --surface-alt: #F1EFE8;
+  --text: #1A1A18;
+  --text-sec: #6B6A65;
+  --text-tri: #9C9B96;
+  --border: rgba(0,0,0,0.08);
+  --accent: #414242;
+  --radius: 2px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 4rem;
+}
+
+.header {
+  margin-bottom: 2.5rem;
+}
+
+.header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  margin-bottom: 6px;
+}
+
+.header p {
+  font-size: 14px;
+  color: var(--text-sec);
+  line-height: 1.5;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  text-decoration: none;
+  color: var(--text);
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.15s, transform 0.15s;
+  min-height: 140px;
+}
+
+.card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+  transform: translateY(-2px);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--accent);
+}
+
+.card.card-refunds::before { background: #687e94; }
+.card.card-influencers::before { background: #7F77DD; }
+.card.card-outsource::before { background: #BA7517; }
+.card.card-other::before { background: #355b3d; }
+
+.card-icon {
+  font-size: 24px;
+  margin-bottom: 12px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+}
+
+.card-refunds .card-icon { background: #E6F1FB; color: #1f2934; }
+.card-influencers .card-icon { background: #EEEDFE; color: #14122c; }
+.card-outsource .card-icon { background: #FAEEDA; color: #2a1803; }
+.card-other .card-icon { background: #E8F3EA; color: #1a3520; }
+
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.card-desc {
+  font-size: 12px;
+  color: var(--text-sec);
+  line-height: 1.45;
+  margin-bottom: 14px;
+}
+
+.card-status {
+  font-size: 11px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.card-status.active {
+  color: #355b3d;
+}
+
+.card-status.coming {
+  color: var(--text-tri);
+}
+
+.card-status .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.card-status.active .dot { background: #355b3d; }
+.card-status.coming .dot { background: var(--text-tri); }
+
+.card.disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.footer {
+  margin-top: 3rem;
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-tri);
+}
+
+@media (max-width: 500px) {
+  .page { padding: 2rem 1rem 3rem; }
+  .header h1 { font-size: 24px; }
+  .cards { grid-template-columns: 1fr; }
+  .card { min-height: 120px; }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="header">
+    <h1>Dashboard</h1>
+    <p>Внутренняя панель управления</p>
+  </div>
+
+  <div class="cards">
+    <a href="refunds.html" class="card card-refunds">
+      <div>
+        <div class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M4 10L8 14L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="card-title">Returns & Refunds</div>
+        <div class="card-desc">Возвраты, отмены, обмены и чарджбеки</div>
+      </div>
+      <div class="card-status active"><span class="dot"></span> Активно</div>
+    </a>
+
+    <div class="card card-influencers disabled">
+      <div>
+        <div class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="7" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M3 17.5c0-3.5 3.1-6 7-6s7 2.5 7 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="card-title">Инфлюенсеры</div>
+        <div class="card-desc">Работа с инфлюенсерами и коллаборации</div>
+      </div>
+      <div class="card-status coming"><span class="dot"></span> Скоро</div>
+    </div>
+
+    <div class="card card-outsource disabled">
+      <div>
+        <div class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <rect x="3" y="5" width="14" height="10" rx="1" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M7 5V3.5a1.5 1.5 0 011.5-1.5h3A1.5 1.5 0 0113 3.5V5" stroke="currentColor" stroke-width="1.8"/>
+            <line x1="3" y1="10" x2="17" y2="10" stroke="currentColor" stroke-width="1.8"/>
+          </svg>
+        </div>
+        <div class="card-title">Аутсорс</div>
+        <div class="card-desc">Заказанные на аутсорсе вещи и статусы</div>
+      </div>
+      <div class="card-status coming"><span class="dot"></span> Скоро</div>
+    </div>
+
+    <div class="card card-other disabled">
+      <div>
+        <div class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M10 6v4l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="card-title">Ещё раздел</div>
+        <div class="card-desc">Новый раздел появится здесь</div>
+      </div>
+      <div class="card-status coming"><span class="dot"></span> Скоро</div>
+    </div>
+  </div>
+
+  <div class="footer">Данные обновляются автоматически из Google Таблиц</div>
+</div>
+
+</body>
+</html>
